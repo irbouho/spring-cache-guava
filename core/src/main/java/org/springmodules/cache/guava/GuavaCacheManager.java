@@ -46,12 +46,12 @@ public class GuavaCacheManager extends AbstractTransactionSupportingCacheManager
 		this.caches = caches;
 	}
 
-	public String getSpec() {
-		return spec;
-	}
-
 	public void setSpec(String spec) {
 		this.spec = spec;
+	}
+
+	public String getSpec() {
+		return spec;
 	}
 
 	public void setAllowNullValues(boolean allowNullValues) {

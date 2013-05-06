@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 public class GuavaCacheFactoryBeanTest {
 
 	@Test
-	public void defaultConfig()throws Exception {
+	public void testDefaultConfig()throws Exception {
 		GuavaCacheFactoryBean factoryBean = new GuavaCacheFactoryBean();
 
 		assertTrue(factoryBean.isSingleton());
@@ -46,7 +46,7 @@ public class GuavaCacheFactoryBeanTest {
 	}
 
 	@Test
-	public void customConfig()throws Exception {
+	public void testCustomConfig()throws Exception {
 		GuavaCacheFactoryBean factoryBean = new GuavaCacheFactoryBean();
 		factoryBean.setBeanName("cacheName");
 		factoryBean.setAllowNullValues(true);
@@ -70,7 +70,7 @@ public class GuavaCacheFactoryBeanTest {
 	}
 
 	@Test
-	public void singleton()throws Exception {
+	public void testSingleton()throws Exception {
 		GuavaCacheFactoryBean factoryBean = new GuavaCacheFactoryBean();
 		factoryBean.afterPropertiesSet();
 		GuavaCache cache1 = factoryBean.getObject();

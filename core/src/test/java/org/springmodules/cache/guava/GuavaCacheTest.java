@@ -15,12 +15,16 @@
  */
 package org.springmodules.cache.guava;
 
+import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -32,12 +36,12 @@ import static org.junit.Assert.assertNull;
 public class GuavaCacheTest {
 
 	@Test(expected = NullPointerException.class)
-	public void nameIsRequired() {
+	public void testNameIsRequired() {
 		new GuavaCache(null);
 	}
 
 	@Test
-	public void newWithSpec() {
+	public void testNewWithSpec() {
 		CacheBuilderSpec spec = CacheBuilderSpec.parse("maximumSize=2");
 		GuavaCache cache = new GuavaCache("name", spec, true);
 		cache.put("key1", "value1");
@@ -47,27 +51,27 @@ public class GuavaCacheTest {
 	}
 
 	@Test
-	public void get() {
+	public void testGet() {
 		GuavaCache cache = new GuavaCache("name");
 		cache.getNativeCache().put("key", "value");
 		assertEquals("value", cache.get("key").get());
 	}
 
 	@Test
-	public void getAbsent() {
+	public void testGetAbsent() {
 		GuavaCache cache = new GuavaCache("name");
 		assertNull(cache.get("key"));
 	}
 
 	@Test
-	public void put() {
+	public void testPut() {
 		GuavaCache cache = new GuavaCache("name");
 		cache.put("key", "value");
 		assertEquals("value", cache.getNativeCache().getIfPresent("key"));
 	}
 
 	@Test
-	public void evict() {
+	public void testEvict() {
 		GuavaCache cache = new GuavaCache("name");
 		cache.getNativeCache().put("key", "value");
 
@@ -77,7 +81,7 @@ public class GuavaCacheTest {
 	}
 
 	@Test
-	public void clear() {
+	public void testClear() {
 		GuavaCache cache = new GuavaCache("name");
 		cache.getNativeCache().put("key1", "value1");
 		cache.getNativeCache().put("key2", "value2");
@@ -89,7 +93,7 @@ public class GuavaCacheTest {
 	}
 
 	@Test
-	public void allowNullValues() {
+	public void testAllowNullValues() {
 		Cache cache = new GuavaCache("name", true);
 		cache.put("key", null);
 		Cache.ValueWrapper value = cache.get("key");
@@ -97,9 +101,22 @@ public class GuavaCacheTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void disallowNullValues() {
+	public void testDisallowNullValues() {
 		Cache cache = new GuavaCache("name", false);
 		cache.put("key", null);
+	}
+
+	@Test
+	public void testExpire() {
+		CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.SECONDS);
+		GuavaCache cache = new GuavaCache("name", builder, false);
+		cache.getNativeCache().put("key", "value");
+		assertEquals("value", cache.get("key").get());
+
+		// wait for expiration
+		sleepUninterruptibly(3, TimeUnit.SECONDS);
+
+		assertNull(cache.get("key"));
 	}
 
 }
