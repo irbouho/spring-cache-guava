@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<target>System.out</target>
+		<encoder>
+			<pattern>%d{ISO8601} [%thread] %-5level %logger{20} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springmodules.samples" level="debug"/>
+
+	<root level="error">
+		<appender-ref ref="CONSOLE"/>
+	</root>
+</configuration>

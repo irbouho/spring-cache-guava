@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:cache="http://www.springframework.org/schema/cache"
+	   xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+       ">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		  p:location="classpath:/META-INF/config/config.properties"/>
+
+	<!-- embedded database + dataSource -->
+	<jdbc:embedded-database id="dataSource" type="H2">
+		<jdbc:script location="${db.scripts.location}/db-schema.sql"/>
+		<jdbc:script location="${db.scripts.location}/db-data.sql"/>
+	</jdbc:embedded-database>
+
+	<!-- scan and configure repositories -->
+	<context:component-scan base-package="org.springmodules.samples.cache.guava.repository"/>
+
+	<!-- scan and configure services -->
+	<context:component-scan base-package="org.springmodules.samples.cache.guava.service"/>
+
+	<!-- tx manager -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+			p:dataSource-ref="dataSource"/>
+	<tx:annotation-driven/>
+
+	<!-- cache -->
+	<bean id="cacheManager" class="org.springmodules.cache.guava.GuavaCacheManager"
+		  p:transactionAware="true">
+		<property name="caches">
+			<list>
+				<bean class="org.springmodules.cache.guava.GuavaCacheFactoryBean" p:beanName="users-cache"/>
+				<bean class="org.springmodules.cache.guava.GuavaCacheFactoryBean" p:beanName="post-cache"/>
+			</list>
+		</property>
+	</bean>
+
+	<cache:annotation-driven/>
+
+</beans>
