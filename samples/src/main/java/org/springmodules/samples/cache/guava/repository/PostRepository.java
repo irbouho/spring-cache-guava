@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 public interface PostRepository {
 
-	void crate(Post post);
+	void create(Post post);
 
 	void update(Post post);
 

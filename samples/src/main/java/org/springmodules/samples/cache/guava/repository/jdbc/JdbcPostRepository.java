@@ -23,8 +23,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springmodules.samples.cache.guava.repository.PostRepository;
 import org.springmodules.samples.cache.guava.domain.Post;
+import org.springmodules.samples.cache.guava.repository.PostRepository;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class JdbcPostRepository extends NamedParameterJdbcDaoSupport implements 
 	}
 
 	@Override
-	public void crate(Post post) {
+	public void create(Post post) {
 		Number id = insertPost.executeAndReturnKey(
 				new MapSqlParameterSource()
 						.addValue("user_name", post.getUserName())

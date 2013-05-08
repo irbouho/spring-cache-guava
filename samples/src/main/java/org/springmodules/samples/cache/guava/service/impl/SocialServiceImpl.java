@@ -18,10 +18,10 @@ package org.springmodules.samples.cache.guava.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springmodules.samples.cache.guava.repository.PostRepository;
-import org.springmodules.samples.cache.guava.repository.UserRepository;
 import org.springmodules.samples.cache.guava.domain.Post;
 import org.springmodules.samples.cache.guava.domain.User;
+import org.springmodules.samples.cache.guava.repository.PostRepository;
+import org.springmodules.samples.cache.guava.repository.UserRepository;
 import org.springmodules.samples.cache.guava.service.SocialService;
 
 import java.util.Collection;
@@ -64,7 +64,7 @@ public class SocialServiceImpl implements SocialService {
 	@Override
 	@Transactional(readOnly = false)
 	public void createPost(Post post) {
-		postRepository.crate(checkNotNull(post));
+		postRepository.create(checkNotNull(post));
 	}
 
 	@Override
