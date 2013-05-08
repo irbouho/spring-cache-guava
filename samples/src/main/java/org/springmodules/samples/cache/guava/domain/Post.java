@@ -26,6 +26,8 @@ import java.util.Date;
  */
 public class Post implements Serializable {
 
+	private static final long serialVersionUID = 9117377389553127823L;
+
 	private String userName;
 	private int id;
 	private Date submitDate;
