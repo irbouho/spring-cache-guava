@@ -16,33 +16,27 @@
 package org.springmodules.cache.guava;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 /**
  * @author Omar Irbouh
  * @since 1.0
  */
-@RunWith(MockitoJUnitRunner.class)
 public class GuavaCacheFactoryBeanTest {
 
 	@Test
 	public void testDefaultConfig() throws Exception {
 		GuavaCacheFactoryBean factoryBean = new GuavaCacheFactoryBean();
 
-		assertTrue(factoryBean.isSingleton());
-		assertTrue(GuavaCache.class.equals(factoryBean.getObjectType()));
+		assertThat(factoryBean.isSingleton()).isTrue();
+		assertThat(GuavaCache.class.equals(factoryBean.getObjectType())).isTrue();
 
 		factoryBean.afterPropertiesSet();
 		GuavaCache cache = factoryBean.getObject();
 
-		assertEquals("", cache.getName());
-		assertTrue(cache.isAllowNullValues());
+		assertThat(cache.getName()).isEqualTo("");
+		assertThat(cache.isAllowNullValues()).isTrue();
 	}
 
 	@Test
@@ -54,18 +48,18 @@ public class GuavaCacheFactoryBeanTest {
 		factoryBean.afterPropertiesSet();
 		GuavaCache cache = factoryBean.getObject();
 
-		assertEquals("cacheName", cache.getName());
-		assertTrue(cache.isAllowNullValues());
+		assertThat(cache.getName()).isEqualTo("cacheName");
+		assertThat(cache.isAllowNullValues()).isTrue();
 
 		// spec
 		cache.put("key1", "value1");
 		cache.put("key2", "value2");
 		cache.put("key3", "value3");
-		assertEquals(2, cache.getNativeCache().size());
+		assertThat(cache.getNativeCache().size()).isEqualTo(2);
 
 		// allow null
 		cache.put("key", null);
-		assertNull(cache.get("key").get());
+		assertThat(cache.get("key").get()).isNull();
 	}
 
 	@Test
@@ -75,8 +69,8 @@ public class GuavaCacheFactoryBeanTest {
 		GuavaCache cache1 = factoryBean.getObject();
 		GuavaCache cache2 = factoryBean.getObject();
 
-		assertTrue(factoryBean.isSingleton());
-		assertSame(cache1, cache2);
+		assertThat(factoryBean.isSingleton()).isTrue();
+		assertThat(cache1).isSameAs(cache2);
 	}
 
 }

@@ -18,22 +18,17 @@ package org.springmodules.cache.guava;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
 /**
  * @author Omar Irbouh
  * @since 1.0
  */
-@RunWith(MockitoJUnitRunner.class)
 public class GuavaCacheManagerTest {
 
 	@Test
@@ -49,10 +44,9 @@ public class GuavaCacheManagerTest {
 		manager.afterPropertiesSet();
 
 		Collection<String> cacheNames = manager.getCacheNames();
-		assertEquals(caches.size(), cacheNames.size());
-		for (GuavaCache cache : caches) {
-			assertTrue(cacheNames.contains(cache.getName()));
-		}
+		assertThat(caches).hasSameSizeAs(cacheNames);
+		assertThat(extractProperty("name").from(caches))
+				.containsAll(cacheNames);
 	}
 
 	@Test
@@ -68,7 +62,7 @@ public class GuavaCacheManagerTest {
 		manager.afterPropertiesSet();
 
 		for (GuavaCache cache : caches) {
-			assertSame(cache, manager.getCache(cache.getName()));
+			assertThat(manager.getCache(cache.getName())).isSameAs(cache);
 		}
 	}
 
@@ -78,17 +72,17 @@ public class GuavaCacheManagerTest {
 		manager.afterPropertiesSet();
 
 		// no cache available by default
-		assertEquals(0, manager.getCacheNames().size());
+		assertThat(manager.getCacheNames()).isEmpty();
 
 		// getting a new cache will add-it to available caches
-		assertEquals("cache1", manager.getCache("cache1").getName());
-		assertEquals(1, manager.getCacheNames().size());
-		assertEquals("cache2", manager.getCache("cache2").getName());
-		assertEquals(2, manager.getCacheNames().size());
+		assertThat(manager.getCache("cache1").getName()).isEqualTo("cache1");
+		assertThat(manager.getCacheNames()).hasSize(1);
+		assertThat(manager.getCache("cache2").getName()).isEqualTo("cache2");
+		assertThat(manager.getCacheNames()).hasSize(2);
 
 		// get existing cache
-		assertEquals("cache1", manager.getCache("cache1").getName());
-		assertEquals(2, manager.getCacheNames().size());
+		assertThat(manager.getCache("cache1").getName()).isEqualTo("cache1");
+		assertThat(manager.getCacheNames()).hasSize(2);
 	}
 
 	@Test
@@ -97,7 +91,7 @@ public class GuavaCacheManagerTest {
 		manager.afterPropertiesSet();
 
 		GuavaCache cache = (GuavaCache) manager.getCache("cache1");
-		assertTrue(cache.isAllowNullValues());
+		assertThat(cache.isAllowNullValues()).isTrue();
 	}
 
 	@Test
@@ -108,16 +102,16 @@ public class GuavaCacheManagerTest {
 		manager.afterPropertiesSet();
 
 		GuavaCache cache = (GuavaCache) manager.getCache("cache1");
-		assertFalse(cache.isAllowNullValues());
+		assertThat(cache.isAllowNullValues()).isFalse();
 		cache.put("key1", "value1");
 		cache.put("key2", "value2");
 		cache.put("key3", "value3");
-		assertEquals(2, cache.getNativeCache().size());
+		assertThat(cache.getNativeCache().size()).isEqualTo(2);
 
 		Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
 		// evict stale entries
 		cache.getNativeCache().cleanUp();
-		assertEquals(0, cache.getNativeCache().size());
+		assertThat(cache.getNativeCache().size()).isZero();
 	}
 
 }

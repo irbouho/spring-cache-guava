@@ -18,21 +18,18 @@ package org.springmodules.cache.guava;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * @author Omar Irbouh
  * @since 1.0
  */
-@RunWith(MockitoJUnitRunner.class)
 public class GuavaCacheTest {
 
 	@Test(expected = NullPointerException.class)
@@ -47,27 +44,33 @@ public class GuavaCacheTest {
 		cache.put("key1", "value1");
 		cache.put("key2", "value2");
 		cache.put("key3", "value3");
-		assertEquals(2, cache.getNativeCache().size());
+
+		assertThat(cache.getNativeCache().size()).isEqualTo(2);
 	}
 
 	@Test
 	public void testGet() {
 		GuavaCache cache = new GuavaCache("name");
 		cache.getNativeCache().put("key", "value");
-		assertEquals("value", cache.get("key").get());
+
+		assertThat(cache.get("key").get()).isEqualTo("value");
 	}
 
 	@Test
 	public void testGetAbsent() {
 		GuavaCache cache = new GuavaCache("name");
-		assertNull(cache.get("key"));
+
+		assertThat(cache.get("key")).isNull();
 	}
 
 	@Test
 	public void testPut() {
 		GuavaCache cache = new GuavaCache("name");
 		cache.put("key", "value");
-		assertEquals("value", cache.getNativeCache().getIfPresent("key"));
+
+		assertThat(cache.getNativeCache().getIfPresent("key"))
+				.isNotNull()
+				.isEqualTo("value");
 	}
 
 	@Test
@@ -75,9 +78,12 @@ public class GuavaCacheTest {
 		GuavaCache cache = new GuavaCache("name");
 		cache.getNativeCache().put("key", "value");
 
-		assertEquals("value", cache.getNativeCache().getIfPresent("key"));
+		assertThat(cache.getNativeCache().getIfPresent("key"))
+				.isNotNull()
+				.isEqualTo("value");
+
 		cache.evict("key");
-		assertNull(cache.getNativeCache().getIfPresent("key"));
+		assertThat(cache.getNativeCache().getIfPresent("key")).isNull();
 	}
 
 	@Test
@@ -87,22 +93,24 @@ public class GuavaCacheTest {
 		cache.getNativeCache().put("key2", "value2");
 		cache.getNativeCache().put("key3", "value3");
 
-		assertEquals(3, cache.getNativeCache().size());
+		assertThat(cache.getNativeCache().size()).isEqualTo(3);
+
 		cache.clear();
-		assertEquals(0, cache.getNativeCache().size());
+		assertThat(cache.getNativeCache().size()).isZero();
 	}
 
 	@Test
 	public void testAllowNullValues() {
 		Cache cache = new GuavaCache("name", true);
 		cache.put("key", null);
-		Cache.ValueWrapper value = cache.get("key");
-		assertNull(value.get());
+
+		assertThat(cache.get("key").get()).isNull();
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void testDisallowNullValues() {
 		Cache cache = new GuavaCache("name", false);
+
 		cache.put("key", null);
 	}
 
@@ -116,7 +124,7 @@ public class GuavaCacheTest {
 		// wait for expiration
 		sleepUninterruptibly(3, TimeUnit.SECONDS);
 
-		assertNull(cache.get("key"));
+		assertThat(cache.get("key")).isNull();
 	}
 
 }
