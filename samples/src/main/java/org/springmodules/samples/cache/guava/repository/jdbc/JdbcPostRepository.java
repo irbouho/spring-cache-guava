@@ -41,7 +41,7 @@ public class JdbcPostRepository extends NamedParameterJdbcDaoSupport implements 
 
 	@Autowired
 	public JdbcPostRepository(DataSource dataSource) {
-		setDataSource(dataSource);
+		super.setDataSource(dataSource);
 
 		insertPost = new SimpleJdbcInsert(dataSource)
 				.withTableName("posts")

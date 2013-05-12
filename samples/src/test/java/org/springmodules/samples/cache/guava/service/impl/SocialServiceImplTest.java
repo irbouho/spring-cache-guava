@@ -20,21 +20,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.exceptions.verification.ArgumentsAreDifferent;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.springmodules.samples.cache.guava.domain.Post;
 import org.springmodules.samples.cache.guava.domain.User;
 import org.springmodules.samples.cache.guava.repository.PostRepository;
 import org.springmodules.samples.cache.guava.repository.UserRepository;
 
 import java.util.Collection;
-import java.util.Date;
 
-import static org.junit.Assert.assertSame;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springmodules.samples.cache.guava.util.SampleTests.newPost;
+import static org.springmodules.samples.cache.guava.util.SampleTests.newUser;
 
 /**
  * @author Omar Irbouh
@@ -67,7 +65,7 @@ public class SocialServiceImplTest {
 
 		Collection<User> result = socialService.findAllUsers();
 
-		assertSame(users, result);
+		assertThat(users).isSameAs(result);
 		verify(userRepository).findAll();
 	}
 
@@ -78,7 +76,7 @@ public class SocialServiceImplTest {
 
 		given(userRepository.findByUserName(userName)).willReturn(user);
 
-		assertSame(user, socialService.findUserByUserName(userName));
+		assertThat(socialService.findUserByUserName(userName)).isSameAs(user);
 		verify(userRepository).findByUserName(userName);
 	}
 
@@ -87,21 +85,21 @@ public class SocialServiceImplTest {
 		final String userName = "taha";
 
 		Collection<Post> posts = ImmutableList.of(
-				newPost(1, userName, "post - 1"),
-				newPost(2, userName, "post - 2")
+				newPost(userName, "post - 1"),
+				newPost(userName, "post - 2")
 		);
 
 		given(postRepository.findByUserName(userName)).willReturn(posts);
 
 		Collection<Post> result = socialService.findPostsByUserName(userName);
 
-		assertSame(posts, result);
+		assertThat(posts).isSameAs(result);
 		verify(postRepository).findByUserName(userName);
 	}
 
 	@Test
 	public void testCreatePost() {
-		final Post post = newPost(0, "taha", "post - 1");
+		final Post post = newPost("taha", "post - 1");
 
 		socialService.createPost(post);
 
@@ -115,7 +113,7 @@ public class SocialServiceImplTest {
 
 	@Test
 	public void testUpdatePost() {
-		final Post post = newPost(1, "taha", "post - 1");
+		final Post post = newPost("taha", "post - 1");
 
 		socialService.updatePost(post);
 
@@ -140,46 +138,6 @@ public class SocialServiceImplTest {
 	@Test(expected = NullPointerException.class)
 	public void testDeleteNullPost() {
 		socialService.deletePost(null, 1);
-	}
-
-	User newUser(String userName, String fullName, String emailAddress) {
-		User user = new User();
-		user.setUserName(userName);
-		user.setFullName(fullName);
-		user.setEmailAddress(emailAddress);
-
-		return user;
-	}
-
-	Post newPost(int id, String userName, String content) {
-		Post post = new Post();
-		post.setId(id);
-		post.setUserName(userName);
-		post.setContent(content);
-		post.setSubmitDate(new Date());
-
-		return post;
-	}
-
-	@SuppressWarnings("unused")
-	static class PostMatchingAnswer implements Answer<Void> {
-
-		final Post expected;
-
-		PostMatchingAnswer(Post expected) {
-			this.expected = expected;
-		}
-
-		@Override
-		public Void answer(InvocationOnMock invocation) throws Throwable {
-			Post post = (Post) invocation.getArguments()[0];
-			if (!this.expected.equals(post)) {
-				throw new ArgumentsAreDifferent(
-						String.format("Post %s is different from expected %s", post, expected));
-			}
-
-			return null;
-		}
 	}
 
 }

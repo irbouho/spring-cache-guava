@@ -38,7 +38,7 @@ public class JdbcUserRepository extends NamedParameterJdbcDaoSupport implements 
 
 	@Autowired
 	public JdbcUserRepository(DataSource dataSource) {
-		setDataSource(dataSource);
+		super.setDataSource(dataSource);
 	}
 
 	@Override
