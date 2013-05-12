@@ -16,6 +16,8 @@
 package org.springmodules.samples.cache.guava.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springmodules.samples.cache.guava.domain.Post;
@@ -47,34 +49,40 @@ public class SocialServiceImpl implements SocialService {
 	}
 
 	@Override
+	@Cacheable(value = "users-cache", key = "'all-users'")
 	public Collection<User> findAllUsers() {
 		return userRepository.findAll();
 	}
 
 	@Override
+	@Cacheable(value = "users-cache")
 	public User findUserByUserName(String userName) {
 		return userRepository.findByUserName(checkNotNull(userName));
 	}
 
 	@Override
+	@Cacheable(value = "posts-cache")
 	public Collection<Post> findPostsByUserName(String userName) {
 		return postRepository.findByUserName(checkNotNull(userName));
 	}
 
 	@Override
 	@Transactional(readOnly = false)
+	@CacheEvict(value = "posts-cache", key = "#post.userName")
 	public void createPost(Post post) {
 		postRepository.create(checkNotNull(post));
 	}
 
 	@Override
 	@Transactional(readOnly = false)
+	@CacheEvict(value = "posts-cache", key = "#post.userName")
 	public void updatePost(Post post) {
 		postRepository.update(checkNotNull(post));
 	}
 
 	@Override
 	@Transactional(readOnly = false)
+	@CacheEvict(value = "posts-cache", key = "#userName")
 	public void deletePost(String userName, int id) {
 		postRepository.delete(checkNotNull(userName), id);
 	}

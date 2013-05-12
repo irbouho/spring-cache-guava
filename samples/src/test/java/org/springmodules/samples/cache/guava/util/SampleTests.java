@@ -68,6 +68,16 @@ public final class SampleTests {
 	}
 
 	/**
+	 * Helper method for creating a {@link Post}.
+	 */
+	public static Post newPostWithId(int id, String userName, String content) {
+		Post post = newPost(userName, content);
+		post.setId(id);
+
+		return post;
+	}
+
+	/**
 	 * builder method for creating a new helper instance for a given {@link DataSource}
 	 */
 	public static JdbcHelper forDataSource(DataSource dataSource) {
