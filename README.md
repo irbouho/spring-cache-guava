@@ -1,12 +1,11 @@
 # spring-cache-guava
 
-
 `spring-cache-guava` is a [Spring Framework Cache adapter](http://static.springsource.org/spring/docs/3.2.x/spring-framework-reference/html/cache.html#cache-plug)
 backed by [Google Guava](http://code.google.com/p/guava-libraries/).
 
 ### Build instructions
 
-`spring-cache-guava` uses a Maven build system. Building the code yourself
+`spring-cache-guava` uses the Maven build system. Building the code yourself
 should be a straightforward case of:
 
     git clone git@github.com:irbouho/spring-cache-guava.git
