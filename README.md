@@ -32,7 +32,7 @@ appropriate current release):
 ```
 
 ### Introduction
-Read the [Introduction page](wiki/Introduction) on the wiki.
+Read the [Introduction page](https://github.com/irbouho/spring-cache-guava/wiki/Introduction) on the wiki.
 
 
 ### Community / Support
