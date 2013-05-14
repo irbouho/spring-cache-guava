@@ -31,10 +31,15 @@ appropriate current release):
 </dependencies>
 ```
 
+### Introduction
+Read the [Introduction page](wiki/Introduction) on the wiki.
+
+
 ### Community / Support
 
 * [spring-cache-guava Google Group](https://groups.google.com/forum/?fromgroups#!forum/spring-cache-guava)
 * [GitHub Issues](https://github.com/irbouho/spring-cache-guava/issues)
+* [Continuous Integration](https://travis-ci.org/irbouho/spring-cache-guava/builds)
 
 License
 -------
